@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import { User } from "../models/User.model";
 
 type SignUpRequest = {
   email: string;
@@ -15,23 +16,22 @@ type AccountResponse = {
 
 const accountController = {
   viewMyAccount: (req: Request, res: Response, next: NextFunction) => {},
-  createAccount: (req: Request, res: Response, next: NextFunction) => {
+  createAccount: async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 회원가입
-      // 나중에 as SignUpRequest 처리하고 Validation 해줘야됨!
       const { email, username, password } = req.body;
 
-      // TODO: DB에 새 유저 생성
+      const [hashed, salt] = ["temphashed", "tempsalt"];
 
-      const user = {
-        id: 123,
+      // DB에 새 유저 생성
+      const user = await User.create({
         email: email,
         username: username,
-        createdAt: new Date(),
-        // salt: salt,
-      };
+        password: password,
+        salt: salt,
+      });
 
-      const token = "temporarytoken";
+      const token = "temptoken";
 
       const response = {
         success: true,
@@ -40,7 +40,7 @@ const accountController = {
       };
 
       res.status(201);
-      res.json(user);
+      res.json(response);
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false });
