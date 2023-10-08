@@ -42,8 +42,7 @@ const accountController = {
       res.status(201);
       res.json(response);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false });
+      next(error);
     }
   },
   updateAccount: (req: Request, res: Response, next: NextFunction) => {},
