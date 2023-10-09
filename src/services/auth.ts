@@ -15,7 +15,7 @@ const hashPass = (password: string, _salt?: string) => {
 
       resolve({
         derivedKey: derivedKey.toString("hex"),
-        salt: salt.toString("hex");
+        salt: salt.toString("hex"),
       });
     });
   });
