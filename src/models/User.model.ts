@@ -25,7 +25,7 @@ export type UserResponse = Pick<UserAttribs, "id" | "email" | "username">;
 export class User extends Model<UserAttribs, UserCAttribs> {
   @Unique("users.email")
   @AllowNull(false)
-  @Column(DataType.STRING(255))
+  @Column(DataType.STRING(256))
   email!: UserAttribs["email"];
 
   @Unique("users.username")
@@ -38,7 +38,7 @@ export class User extends Model<UserAttribs, UserCAttribs> {
   password!: UserAttribs["password"];
 
   @AllowNull(false)
-  @Column(DataType.CHAR(32))
+  @Column(DataType.CHAR(64))
   salt!: UserAttribs["salt"];
 
   @Default(DataType.NOW)
