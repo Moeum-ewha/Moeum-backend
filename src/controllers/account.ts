@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/User.model";
+import AuthService from "../services/auth";
 
 type SignUpRequest = {
   email: string;
@@ -21,13 +22,13 @@ const accountController = {
       // 회원가입
       const { email, username, password } = req.body;
 
-      const [hashed, salt] = ["temphashed", "tempsalt"];
+      const { derivedKey, salt } = await AuthService.hashPassword(password);
 
       // DB에 새 유저 생성
       const user = await User.create({
         email: email,
         username: username,
-        password: password,
+        password: derivedKey,
         salt: salt,
       });
 
