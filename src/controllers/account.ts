@@ -1,22 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/User.model";
 import AuthService from "../services/auth";
-
-type SignUpRequest = {
-  email: string;
-  username: string;
-  password: string;
-};
-
-type AccountResponse = {
-  id: number;
-  email: string; // NOT NULL -> Required field (물음표 없음)
-  username: string;
-  createdAt: Date;
-};
+import ServerError from "../services/error";
 
 const accountController = {
-  viewMyAccount: (req: Request, res: Response, next: NextFunction) => {},
+  viewMyAccount: (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user;
+      if (!user) throw new ServerError("UNAUTHENTICATED", 401);
+    }
+  },
   createAccount: async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 회원가입
