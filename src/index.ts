@@ -1,3 +1,4 @@
+import { validateCreateAccount } from "./middlewares/validator";
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
@@ -17,7 +18,7 @@ app.use(morgan("dev"));
 app
   .route("/account")
   .get(accountController.viewMyAccount)
-  .post(accountController.createAccount)
+  .post(validateCreateAccount, accountController.createAccount)
   .put(accountController.updateAccount)
   .delete(accountController.deleteAccount);
 
@@ -27,5 +28,5 @@ app.use(errorHandler);
 // Server start
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server listening in port ${PORT}`);
+  console.log(`✅ Server listening in port ${PORT}`);
 });
