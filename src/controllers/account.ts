@@ -25,15 +25,19 @@ const accountController = {
         salt: salt,
       });
 
-      const token = "temptoken";
+      const token = AuthService.generateToken(user.id);
 
       const response = {
         success: true,
         token: "",
-        user: user,
+        user: user.toResponse(),
       };
 
       res.status(201);
+      res.cookie(AuthService.COOKIE_NAME, `Bearer ${token}`, {
+        maxAge: AuthService.COOKIE_MAXAGE,
+        httpOnly: true,
+      })
       res.json(response);
     } catch (error) {
       next(error);
