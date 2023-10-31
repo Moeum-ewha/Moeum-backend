@@ -8,6 +8,12 @@ const accountController = {
     try {
       const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
+      res.status(200).json({
+        success: true,
+        user: user.toResponse(),
+      });
+    } catch (error) {
+      next(error);
     }
   },
   createAccount: async (req: Request, res: Response, next: NextFunction) => {
@@ -25,7 +31,8 @@ const accountController = {
         salt: salt,
       });
 
-      const token = AuthService.generateToken(user.id);
+      const accessToken = await AuthService.generateToken(user.id, "access");
+      const refreshToken = await AuthService.generateToken(user.id, "refresh");
 
       const response = {
         success: true,
@@ -33,12 +40,16 @@ const accountController = {
         user: user.toResponse(),
       };
 
-      res.status(201);
-      res.cookie(AuthService.COOKIE_NAME, `Bearer ${token}`, {
-        maxAge: AuthService.COOKIE_MAXAGE,
+      res.cookie(AuthService.COOKIE_ACCESS_NAME, `Bearer ${accessToken}`, {
+        maxAge: AuthService.COOKIE_ACCESS_MAXAGE,
         httpOnly: true,
-      })
-      res.json(response);
+      });
+      res.cookie(AuthService.COOKIE_REFRESH_NAME, `Bearer ${refreshToken}`, {
+        maxAge: AuthService.COOKIE_REFRESH_MAXAGE,
+        httpOnly: true,
+      });
+
+      res.status(201).json(response);
     } catch (error) {
       next(error);
     }
