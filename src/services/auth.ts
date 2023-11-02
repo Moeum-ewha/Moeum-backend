@@ -4,7 +4,7 @@ import { readFile } from "fs/promises";
 import ServerError from "./error";
 import { Request } from "express";
 import { User } from "../models/User.model";
-import isInt from "validator/es/lib/isInt";
+import isInt from "validator/lib/isInt";
 
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
@@ -67,7 +67,8 @@ export default class AuthService {
     }
   }
 
-  // Access 토큰이 제대로 들어있으면 유저를 돌려줌 (Refresh 토큰은 신경 안씀.)
+  // Access 토큰이 제대로 들어있으면 토큰의 payload를 풀어서 userId로 유저를 찾아서 돌려줌 (Refresh 토큰은 신경 안씀.)
+  // checkAuth와 requireAuth 미들웨어에서 실행함.
   public static async authenticate(
     req: Request,
     newAccessToken?: string | null,
