@@ -1,3 +1,4 @@
+import { checkAuth, requireAuth } from "./middlewares/auth";
 import {
   validateCreateAccount,
   validateLoginEmail,
@@ -9,6 +10,8 @@ import cookieParser from "cookie-parser";
 import accountController from "./controllers/account";
 import { errorHandler } from "./controllers/error";
 import authController from "./controllers/auth";
+import postController from "./controllers/post";
+import postsController from "./controllers/posts";
 
 // Config
 dotenv.config();
@@ -23,14 +26,23 @@ app.use(morgan("dev"));
 // Controllers
 app
   .route("/account")
-  .get(accountController.viewMyAccount)
+  .get(requireAuth, accountController.viewMyAccount)
   .post(validateCreateAccount, accountController.createAccount)
-  .put(accountController.updateAccount)
-  .delete(accountController.deleteAccount);
+  .put(requireAuth, accountController.updateAccount)
+  .delete(requireAuth, accountController.deleteAccount);
 app
   .route("/auth")
   .post(validateLoginEmail, authController.loginEmail) // login
   .delete(authController.logoutEmail); // logout
+app
+  .route("/posts")
+  .get(requireAuth, postsController.viewPosts)
+  .post(requireAuth, postsController.createPost);
+app
+  .route("/post/:id")
+  .get(requireAuth, postController.viewPost)
+  .put(requireAuth, postController.editPost)
+  .delete(requireAuth, postController.deletePost);
 
 // Error Handler (ALWAYS last)
 app.use(errorHandler);

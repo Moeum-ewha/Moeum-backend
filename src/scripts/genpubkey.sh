@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Generate public key
-openssl ec -in private.ec.key -pubout -out public.ec.pem
+openssl ec -in private.refresh.ec.key -pubout -out public.refresh.ec.pem

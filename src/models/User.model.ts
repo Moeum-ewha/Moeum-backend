@@ -9,7 +9,7 @@ import {
 } from "sequelize-typescript";
 
 export type UserAttribs = {
-  id: string;
+  id: number;
   email: string;
   username: string;
   password: string;
