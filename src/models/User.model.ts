@@ -50,9 +50,9 @@ export class User extends Model<UserAttribs, UserCAttribs> {
 
   toResponse(): UserResponse {
     return {
-      id: this.get("id"),
-      email: this.get("email"),
-      username: this.get("username"),
+      id: this.id,
+      email: this.email,
+      username: this.username,
     };
   }
 }

@@ -40,9 +40,9 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
 
   toResponse(): PostResponse {
     return {
-      id: this.get("id"),
-      content: this.get("content"),
-      createdBy: this.get("createdBy").toResponse(),
+      id: this.id,
+      content: this.content,
+      createdBy: this.createdBy.toResponse(),
     };
   }
 }
