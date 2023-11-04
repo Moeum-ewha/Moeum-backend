@@ -12,6 +12,8 @@ import { errorHandler } from "./controllers/error";
 import authController from "./controllers/auth";
 import postController from "./controllers/post";
 import postsController from "./controllers/posts";
+import { connectDB } from "./services/database";
+import AuthService from "./services/auth";
 
 // Config
 dotenv.config();
@@ -49,6 +51,13 @@ app.use(errorHandler);
 
 // Server start
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`✅ Server listening in port ${PORT}`);
-});
+
+const startServer = async () => {
+  await AuthService.loadKeys();
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`✅ Server listening in port ${PORT}`);
+  });
+};
+
+startServer();
