@@ -153,7 +153,7 @@ export default class AuthService {
     // Private key: Token 서명을 만들 때
 
     // Read private key (for access token) from file
-    const privateAccessKeyFile = await readFile("keys/private.access.ec.key", {
+    const privateAccessKeyFile = await readFile("keys/private-access.ec.key", {
       encoding: "utf-8",
     });
     this.JWT_ACCESS_PRIVATE_KEY = await jose.importPKCS8(
@@ -162,7 +162,7 @@ export default class AuthService {
     );
 
     // Read public key (for access token) from file
-    const publicAccessKeyFile = await readFile("keys/public.access.ec.pem", {
+    const publicAccessKeyFile = await readFile("keys/public-access.ec.pem", {
       encoding: "utf-8",
     });
     this.JWT_ACCESS_PUBLIC_KEY = await jose.importSPKI(
@@ -172,7 +172,7 @@ export default class AuthService {
 
     // Read private key (for refresh token) from file
     const privateRefreshKeyFile = await readFile(
-      "keys/private.refresh.ec.key",
+      "keys/private-refresh.ec.key",
       {
         encoding: "utf-8",
       },
@@ -183,13 +183,15 @@ export default class AuthService {
     );
 
     // Read public key (for refresh token) from file
-    const publicRefreshKeyFile = await readFile("keys/public.refresh.ec.pem", {
+    const publicRefreshKeyFile = await readFile("keys/public-refresh.ec.pem", {
       encoding: "utf-8",
     });
     this.JWT_REFRESH_PUBLIC_KEY = await jose.importSPKI(
       publicRefreshKeyFile,
       this.JWT_ALGORITHM,
     );
+
+    console.log("✅ Loaded keys");
   }
 
   public static async generateToken(
@@ -203,6 +205,7 @@ export default class AuthService {
     // SignJWT는 클래스임. 따라서 signJWT라는 인스턴스를 만듦.
     // 표준 페이로드는 다 set함수로 집어넣음.
     const signJWT = new jose.SignJWT({ type: tokenType }); // 표준 아닌 payload를 객체 안에 작성
+    signJWT.setProtectedHeader({ alg: this.JWT_ALGORITHM });
     signJWT.setIssuedAt();
     signJWT.setExpirationTime(
       tokenType === "access"

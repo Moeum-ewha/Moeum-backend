@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ServerError from "../services/error";
 
+// 인자가 네개이고 맨 마지막 미들웨어이며 단 한개일 때 express가 에러핸들러 함수임을 알아챔.
 export const errorHandler = (
   err: unknown,
   req: Request,
@@ -23,4 +24,9 @@ export const errorHandler = (
     }
     console.error(err);
   }
+
+  res.status(code).json({
+    success: false,
+    message: message,
+  });
 };
