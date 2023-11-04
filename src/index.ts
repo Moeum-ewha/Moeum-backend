@@ -1,8 +1,7 @@
+import { validateCreatePost } from "./middlewares/validators/posts";
+import { validateCreateAccount } from "./middlewares/validators/account";
+import { validateLoginEmail } from "./middlewares/validators/auth";
 import { checkAuth, requireAuth } from "./middlewares/auth";
-import {
-  validateCreateAccount,
-  validateLoginEmail,
-} from "./middlewares/validator";
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
@@ -39,7 +38,7 @@ app
 app
   .route("/posts")
   .get(requireAuth, postsController.viewPosts)
-  .post(requireAuth, postsController.createPost);
+  .post(requireAuth, validateCreatePost, postsController.createPost);
 app
   .route("/post/:id")
   .get(requireAuth, postController.viewPost)
