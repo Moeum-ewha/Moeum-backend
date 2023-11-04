@@ -3,10 +3,12 @@ import {
   AllowNull,
   Column,
   DataType,
-  Default,
+  HasMany,
   Model,
+  Table,
   Unique,
 } from "sequelize-typescript";
+import { Post } from "./Post.model";
 
 export type UserAttribs = {
   id: number;
@@ -15,13 +17,20 @@ export type UserAttribs = {
   password: string;
   salt: string;
   createdAt: string;
-  // posts?: Post[];
+  posts?: Post[];
 };
 
 export type UserCAttribs = Optional<UserAttribs, "id" | "createdAt">;
 
 export type UserResponse = Pick<UserAttribs, "id" | "email" | "username">;
 
+@Table({
+  modelName: "User",
+  tableName: "users",
+  timestamps: true, // createdAt, updatedAt 자동생성
+  charset: "utf8mb4",
+  collate: "utf8mb4_general_ci",
+})
 export class User extends Model<UserAttribs, UserCAttribs> {
   @Unique("users.email")
   @AllowNull(false)
@@ -41,12 +50,8 @@ export class User extends Model<UserAttribs, UserCAttribs> {
   @Column(DataType.CHAR(64))
   salt!: UserAttribs["salt"];
 
-  @Default(DataType.NOW)
-  @AllowNull(false)
-  @Column(DataType.DATE)
-  createdAt!: UserAttribs["createdAt"];
-
-  // Post모델이랑 HasMany 만들어야 함
+  @HasMany(() => Post, { foreignKey: "createdById" })
+  posts: UserAttribs["posts"];
 
   toResponse(): UserResponse {
     return {
