@@ -41,7 +41,7 @@ app
   .post(requireAuth, validateCreatePost, postsController.createPost);
 app
   .route("/post/:id")
-  .get(requireAuth, postController.viewPost)
+  .get(checkAuth, postController.viewPost)
   .put(requireAuth, postController.editPost)
   .delete(requireAuth, postController.deletePost);
 
