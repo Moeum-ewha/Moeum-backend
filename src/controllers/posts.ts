@@ -1,3 +1,4 @@
+import { PostResponse } from "./../models/Post.model";
 import { NextFunction, Request, Response } from "express";
 import ServerError from "../services/error";
 import { Post } from "../models/Post.model";
