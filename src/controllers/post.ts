@@ -36,6 +36,8 @@ const postController = {
       const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
+      const takenAt = new Date(req.body.takenAt);
+
       const postId = req.params.id;
       if (!isInt(postId)) {
         throw new ServerError("POST__INVALID_POSTID", 400);
@@ -52,6 +54,7 @@ const postController = {
         }
 
         post.set("content", req.body.content);
+        post.set("takenAt", takenAt);
         await post.save({ transaction: t }); // 변경사항이 있을 때만 보냄
 
         return post.toResponse();
@@ -78,6 +81,26 @@ const postController = {
   },
   deletePost: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const user = req.user;
+      if (!user) throw new ServerError("UNAUTHENTICATED", 401);
+
+      const postId = req.params.id;
+      const post = await Post.findOne({
+        where: { id: postId, createdById: user.id },
+      });
+
+      if (!post) throw new ServerError("POST__NOT_FOUND", 404);
+
+      // 위에 where 절에 createdById 추가해서 찾는 방식이 Model에 따로 Column 추가 안해도 됨!
+      // if (post.createdById !== user.id) {
+      //   throw new ServerError("POST__UNAUTHORIZED_TO_DELETE", 403);
+      // }
+
+      await post.destroy();
+
+      res.status(200).json({
+        success: true,
+      });
     } catch (error) {
       next(error);
     }
