@@ -35,10 +35,13 @@ const postsController = {
       const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
+      const takenAt = new Date(req.body.takenAt);
+
       const postResponse = await sequelize.transaction(async (t) => {
         const post = await Post.create(
           {
             content: req.body.content,
+            takenAt: takenAt,
             createdById: user.id, // 외래키 직접 지정
           },
           { transaction: t },

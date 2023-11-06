@@ -14,6 +14,7 @@ import ServerError from "../services/error";
 export type PostAttribs = {
   id: number;
   content: string;
+  takenAt: Date;
   createdAt: Date;
   createdBy?: User; // 모델에만 존재, 실제 데이터베이스 Column에는 없음.
   createdById: UserAttribs["id"];
@@ -21,7 +22,7 @@ export type PostAttribs = {
 
 type PostCAtrribs = Optional<PostAttribs, "id" | "createdAt" | "createdBy">;
 
-export type PostResponse = Pick<PostAttribs, "id" | "content"> & {
+export type PostResponse = Pick<PostAttribs, "id" | "content" | "takenAt"> & {
   createdBy: UserResponse;
 };
 
@@ -37,6 +38,13 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
   @Column(DataType.STRING(255))
   content!: PostAttribs["content"]; // sequelize가 확실히 만들어 줄 것이기 때문에 !로 타입스크립트 에러를 없애야 함
 
+  @Column(DataType.DATE)
+  takenAt!: PostAttribs["takenAt"];
+
+  // @ForeignKey(() => User)
+  // @Column(DataType.INTEGER)
+  // createdById!: PostAttribs['createdById'];
+
   @BelongsTo(() => User, { foreignKey: "createdById" }) // 두 번째 인자는 외래 키 column의 이름
   createdBy!: PostAttribs["createdBy"]; // post.createdBy를 사용할 일이 많아서 쓰는 것(JOIN하는 역할)
 
@@ -46,6 +54,7 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
     return {
       id: this.id,
       content: this.content,
+      takenAt: this.takenAt,
       createdBy: createdBy.toResponse(),
     };
   }
