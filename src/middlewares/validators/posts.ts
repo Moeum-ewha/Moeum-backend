@@ -26,6 +26,18 @@ export const validateCreatePost = (
     if (location.length === 0)
       throw new ServerError("POSTS__INVALID_LOCATION_LENGTH", 400);
 
+    const latitude = req.body.latitude;
+    if (typeof latitude !== "number")
+      throw new ServerError("POSTS__INVALID_LATITUDE_TYPE", 400);
+    if (latitude > 90 || latitude < -90)
+      throw new ServerError("POSTS__INVALID_LATITUDE", 400);
+
+    const longitude = req.body.longitude;
+    if (typeof longitude !== "number")
+      throw new ServerError("POSTS__INVALID_LONGITUDE_TYPE", 400);
+    if (longitude > 180 || longitude < -180)
+      throw new ServerError("POSTS__INVALID_LONGITUDE", 400);
+
     next(); // validation success
   } catch (error) {
     next(error);

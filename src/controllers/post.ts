@@ -39,6 +39,8 @@ const postController = {
       const content = req.body.content;
       const takenAt = new Date(req.body.takenAt);
       const location = req.body.location;
+      const latitude = req.body.latitude;
+      const longitude = req.body.longitude;
 
       const postId = req.params.id;
       if (!isInt(postId)) {
@@ -58,6 +60,8 @@ const postController = {
         post.set("content", content);
         post.set("takenAt", takenAt);
         post.set("location", location);
+        post.set("latitude", latitude);
+        post.set("longitude", longitude);
 
         await post.save({ transaction: t }); // 변경사항이 있을 때만 보냄
 

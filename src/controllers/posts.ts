@@ -36,8 +36,9 @@ const postsController = {
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
       const takenAt = new Date(req.body.takenAt);
-
       const location = req.body.location;
+      const latitude = req.body.latitude;
+      const longitude = req.body.longitude;
 
       const postResponse = await sequelize.transaction(async (t) => {
         const post = await Post.create(
@@ -45,6 +46,8 @@ const postsController = {
             content: req.body.content,
             takenAt: takenAt,
             location: location,
+            latitude: latitude,
+            longitude: longitude,
             createdById: user.id, // 외래키 직접 지정
           },
           { transaction: t },
