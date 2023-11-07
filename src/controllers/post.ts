@@ -1,10 +1,10 @@
-import { PostResponse } from "./../models/Post.model";
+import { sequelize } from "../services/database";
 import { NextFunction, Request, Response } from "express";
 import isInt from "validator/lib/isInt";
 import ServerError from "../services/error";
 import { Post } from "../models/Post.model";
 import { User } from "../models/User.model";
-import { sequelize } from "../services/database";
+import { Comment } from "../models/Comment.model";
 
 const postController = {
   viewPost: async (req: Request, res: Response, next: NextFunction) => {
@@ -16,7 +16,10 @@ const postController = {
 
       const post = await Post.findOne({
         where: { id: postId },
-        include: [{ model: User, foreignKey: "createdById" }],
+        include: [
+          { model: User, foreignKey: "createdById" },
+          { model: Comment, foreignKey: "postId" },
+        ],
       });
 
       if (!post) {

@@ -4,7 +4,6 @@ import {
   BelongsTo,
   Column,
   DataType,
-  ForeignKey,
   HasMany,
   Model,
   Table,
@@ -26,14 +25,14 @@ export type PostAttribs = {
   comments?: Comment[];
 };
 
-type PostCAtrribs = Optional<PostAttribs, "id" | "createdAt" | "createdBy">;
+type PostCAtrribs = Optional<PostAttribs, "id" | "createdAt">;
 
 export type PostResponse = Pick<
   PostAttribs,
   "id" | "content" | "takenAt" | "location" | "latitude" | "longitude"
 > & {
   createdBy: UserResponse;
-  comments: CommentResponse[];
+  comments?: CommentResponse[];
 };
 
 @Table({
@@ -69,7 +68,7 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
   // createdById!: PostAttribs['createdById'];
 
   @BelongsTo(() => User, { foreignKey: "createdById" }) // 두 번째 인자는 외래 키 column의 이름
-  createdBy!: PostAttribs["createdBy"]; // post.createdBy를 사용할 일이 많아서 쓰는 것(JOIN하는 역할)
+  createdBy: PostAttribs["createdBy"]; // post.createdBy를 사용할 일이 많아서 쓰는 것(JOIN하는 역할)
 
   @HasMany(() => Comment, { foreignKey: "postId" })
   comments: PostAttribs["comments"];
@@ -78,8 +77,7 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
     const createdBy = this.createdBy;
     if (!createdBy) throw new ServerError("POST__USER_NOT_INCLUDED", 500);
 
-    let comments = this.comments;
-    if (!comments) comments = [];
+    let comments = this.comments; // comments, [], undefined 3가지 경우의 수
 
     return {
       id: this.id,
