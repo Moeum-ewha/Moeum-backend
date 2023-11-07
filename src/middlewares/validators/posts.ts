@@ -20,6 +20,12 @@ export const validateCreatePost = (
     if (!takenAt || !isISO8601(takenAt))
       throw new ServerError("POSTS__INVALID_DATE_TYPE", 400);
 
+    const location = req.body.location;
+    if (typeof location !== "string")
+      throw new ServerError("POSTS__INVALID_LOCATION_TYPE", 400);
+    if (location.length === 0)
+      throw new ServerError("POSTS__INVALID_LOCATION_LENGTH", 400);
+
     next(); // validation success
   } catch (error) {
     next(error);

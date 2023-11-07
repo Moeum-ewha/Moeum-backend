@@ -36,7 +36,9 @@ const postController = {
       const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
+      const content = req.body.content;
       const takenAt = new Date(req.body.takenAt);
+      const location = req.body.location;
 
       const postId = req.params.id;
       if (!isInt(postId)) {
@@ -53,8 +55,10 @@ const postController = {
           throw new ServerError("POST__NOT_FOUND", 404);
         }
 
-        post.set("content", req.body.content);
+        post.set("content", content);
         post.set("takenAt", takenAt);
+        post.set("location", location);
+
         await post.save({ transaction: t }); // 변경사항이 있을 때만 보냄
 
         return post.toResponse();
