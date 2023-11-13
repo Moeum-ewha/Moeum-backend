@@ -49,6 +49,7 @@ const postsController = {
             latitude: latitude,
             longitude: longitude,
             createdById: user.id, // 외래키 직접 지정
+            friends: [],
           },
           { transaction: t },
         );
