@@ -62,8 +62,8 @@ export default class AuthService {
       );
       return newAccessToken;
     } catch (error) {
-      // accessToken 확인에 실패하면 refreshToken 확인을 시도함
-      return null;
+      // refreshToken도 없는 경우
+      return undefined;
     }
   }
 
@@ -78,6 +78,7 @@ export default class AuthService {
 
     try {
       accessToken = newAccessToken || req.cookies?.[this.COOKIE_ACCESS_NAME];
+      // console.log(accessToken + "accessToken임");
 
       if (!accessToken || typeof accessToken !== "string") {
         throw new Error();
