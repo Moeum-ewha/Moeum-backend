@@ -3,7 +3,15 @@ import { sequelize } from "../services/database";
 
 const databaseController = {
   syncDatabase: async (req: Request, res: Response, next: NextFunction) => {
-    await sequelize.sync({ force: true });
+    try {
+      await sequelize.sync({ force: true });
+
+      res.status(200).json({
+        success: true,
+      });
+    } catch (error) {
+      next(error);
+    }
   },
 };
 
