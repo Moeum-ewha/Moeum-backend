@@ -22,6 +22,7 @@ export type PostAttribs = {
   location: string;
   latitude: number;
   longitude: number;
+  imgPath: string;
   createdAt: Date;
   createdBy?: User; // 모델에만 존재, 실제 데이터베이스 Column에는 없음.
   createdById: UserAttribs["id"];
@@ -39,6 +40,7 @@ export type PostResponse = Pick<
   | "location"
   | "latitude"
   | "longitude"
+  // "imgPath"???
   | "createdAt"
 > & {
   createdBy: UserResponse;
@@ -72,6 +74,10 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
   @AllowNull(false)
   @Column(DataType.FLOAT)
   longitude!: PostAttribs["longitude"];
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  imgPath!: PostAttribs["imgpath"];
 
   // @ForeignKey(() => User)
   // @Column(DataType.INTEGER)

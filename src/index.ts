@@ -17,6 +17,8 @@ import postsController from "./controllers/posts";
 import commentController from "./controllers/comment";
 import friendsController from "./controllers/friends";
 import friendController from "./controllers/friend";
+import { s3upload } from "./middlewares/file";
+import imageController from "./controllers/image";
 
 // Config
 dotenv.config();
@@ -42,7 +44,12 @@ app
 app
   .route("/posts")
   .get(requireAuth, postsController.viewPosts)
-  .post(requireAuth, validateCreatePost, postsController.createPost);
+  .post(
+    requireAuth,
+    s3upload.single("photo"),
+    validateCreatePost,
+    postsController.createPost,
+  );
 app
   .route("/post/:id")
   .get(checkAuth, postController.viewPost)
@@ -57,6 +64,7 @@ app
   .route("/friend/:id")
   .get(requireAuth, friendController.viewFriend)
   .delete(requireAuth, friendController.deleteFriend);
+app.get("/images/:path", imageController.getImage);
 
 // Error Handler (ALWAYS last)
 app.use(errorHandler);
