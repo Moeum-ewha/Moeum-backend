@@ -77,7 +77,7 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
 
   @AllowNull(false)
   @Column(DataType.STRING)
-  imgPath!: PostAttribs["imgpath"];
+  imgPath!: PostAttribs["imgPath"];
 
   // @ForeignKey(() => User)
   // @Column(DataType.INTEGER)
