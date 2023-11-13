@@ -9,6 +9,7 @@ import {
   Unique,
 } from "sequelize-typescript";
 import { Post } from "./Post.model";
+import { Friend } from "./Friend.model";
 
 export type UserAttribs = {
   id: number;
@@ -18,6 +19,7 @@ export type UserAttribs = {
   salt: string;
   createdAt: string;
   posts?: Post[];
+  friends?: Friend[];
 };
 
 export type UserCAttribs = Optional<UserAttribs, "id" | "createdAt">;
@@ -52,6 +54,9 @@ export class User extends Model<UserAttribs, UserCAttribs> {
 
   @HasMany(() => Post, { foreignKey: "createdById" })
   posts: UserAttribs["posts"];
+
+  @HasMany(() => Friend, { foreignKey: "createdById" })
+  friends: UserAttribs["friends"];
 
   toResponse(): UserResponse {
     return {
