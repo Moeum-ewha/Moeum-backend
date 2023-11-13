@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import isISO8601 from "validator/lib/isISO8601";
+import isFloat from "validator/lib/isFloat";
 import ServerError from "../../services/error";
 
 export const validateCreatePost = (
@@ -27,15 +28,17 @@ export const validateCreatePost = (
       throw new ServerError("POSTS__INVALID_LOCATION_LENGTH", 400);
 
     const latitude = req.body.latitude;
-    if (typeof latitude !== "number")
+    if (!isFloat(latitude))
       throw new ServerError("POSTS__INVALID_LATITUDE_TYPE", 400);
-    if (latitude > 90 || latitude < -90)
+    const float_latitude = parseFloat(latitude);
+    if (float_latitude > 90 || float_latitude < -90)
       throw new ServerError("POSTS__INVALID_LATITUDE", 400);
 
     const longitude = req.body.longitude;
-    if (typeof longitude !== "number")
+    if (!isFloat(longitude))
       throw new ServerError("POSTS__INVALID_LONGITUDE_TYPE", 400);
-    if (longitude > 180 || longitude < -180)
+    const float_longitude = parseFloat(longitude);
+    if (float_longitude > 180 || float_longitude < -180)
       throw new ServerError("POSTS__INVALID_LONGITUDE", 400);
 
     next(); // validation success
