@@ -5,6 +5,7 @@ import {
   BelongsTo,
   Column,
   DataType,
+  ForeignKey,
   Model,
   Table,
 } from "sequelize-typescript";
@@ -25,7 +26,7 @@ type CommentCAttribs = Optional<CommentAttribs, "id" | "createdAt">;
 
 export type CommentResponse = Pick<
   CommentAttribs,
-  "id" | "nickname" | "content" | "createdAt"
+  "id" | "nickname" | "content" | "createdAt" | "postId"
 >;
 
 @Table({
@@ -47,6 +48,10 @@ export class Comment extends Model<CommentAttribs, CommentCAttribs> {
   @BelongsTo(() => User, { foreignKey: "createdById" })
   createdBy!: PostAttribs["createdBy"];
 
+  @ForeignKey(() => Post)
+  @Column(DataType.INTEGER)
+  postId!: CommentAttribs["postId"];
+
   @BelongsTo(() => Post, { foreignKey: "postId" })
   post!: CommentAttribs["post"];
 
@@ -56,6 +61,7 @@ export class Comment extends Model<CommentAttribs, CommentCAttribs> {
       nickname: this.nickname,
       content: this.content,
       createdAt: this.createdAt,
+      postId: this.postId,
     };
   }
 }
