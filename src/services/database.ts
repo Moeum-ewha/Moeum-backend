@@ -17,6 +17,7 @@ export const sequelize = new Sequelize({
     // export하는 게 여러 개이기 때문에 내가 세운 모델 이름 규칙과 member(export하는 각각의 멤버)와 일치하는 애가 모델임을 알림
     return filename.substring(0, filename.indexOf(".model")) === member;
   },
+  logging: process.env.NODE_ENV === "production" ? false : undefined,
 });
 
 export const connectDB = async () => {
