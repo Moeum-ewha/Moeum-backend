@@ -40,6 +40,12 @@ const postsController = {
       const latitude = req.body.latitude;
       const longitude = req.body.longitude;
 
+      if (!req.file) {
+        throw new ServerError("POSTS__MISSING_PHOTO", 400);
+      }
+      const file = req.file as Express.MulterS3.File;
+      const fileName = file.key;
+
       const postResponse = await sequelize.transaction(async (t) => {
         const post = await Post.create(
           {
@@ -48,6 +54,7 @@ const postsController = {
             location: location,
             latitude: latitude,
             longitude: longitude,
+            imgPath: fileName,
             createdById: user.id, // 외래키 직접 지정
             friends: [],
           },
