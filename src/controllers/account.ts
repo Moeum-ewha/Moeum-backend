@@ -1,7 +1,9 @@
+import { UserResponse } from "./../models/User.model";
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/User.model";
 import AuthService from "../services/auth";
 import ServerError from "../services/error";
+import { sequelize } from "../services/database";
 
 const accountController = {
   viewMyAccount: (req: Request, res: Response, next: NextFunction) => {
@@ -24,21 +26,27 @@ const accountController = {
       const { derivedKey, salt } = await AuthService.hashPassword(password);
 
       // DB에 새 유저 생성
-      const user = await User.create({
-        email: email,
-        username: username,
-        password: derivedKey,
-        salt: salt,
+      const userResponse = await sequelize.transaction(async (t) => {
+        const user = await User.create(
+          {
+            email: email,
+            username: username,
+            password: derivedKey,
+            salt: salt,
+          },
+          { transaction: t },
+        );
+        return user.toResponse();
       });
 
-      const accessToken = await AuthService.generateToken(user.id, "access");
-      const refreshToken = await AuthService.generateToken(user.id, "refresh");
-
-      const response = {
-        success: true,
-        token: "",
-        user: user.toResponse(),
-      };
+      const accessToken = await AuthService.generateToken(
+        userResponse.id,
+        "access",
+      );
+      const refreshToken = await AuthService.generateToken(
+        userResponse.id,
+        "refresh",
+      );
 
       res.cookie(AuthService.COOKIE_ACCESS_NAME, `Bearer ${accessToken}`, {
         maxAge: AuthService.COOKIE_ACCESS_MAXAGE,
@@ -49,7 +57,10 @@ const accountController = {
         httpOnly: true,
       });
 
-      res.status(201).json(response);
+      res.status(201).json({
+        success: true,
+        user: userResponse,
+      });
     } catch (error) {
       next(error);
     }

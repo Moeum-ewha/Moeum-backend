@@ -1,7 +1,9 @@
+import { PostResponse } from "./../models/Post.model";
 import { NextFunction, Request, Response } from "express";
 import ServerError from "../services/error";
 import { Post } from "../models/Post.model";
 import { User } from "../models/User.model";
+import { sequelize } from "../services/database";
 
 const postsController = {
   viewPosts: async (req: Request, res: Response, next: NextFunction) => {
@@ -33,17 +35,35 @@ const postsController = {
       const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
-      const post = await Post.create({
-        content: req.body.content,
-        createdById: user.id, // 외래키 직접 지정
-      });
+      const takenAt = new Date(req.body.takenAt);
+      const location = req.body.location;
+      const latitude = req.body.latitude;
+      const longitude = req.body.longitude;
 
-      // SELECT * FROM users WHERE users.id = 1(post.createdById);
-      await post.$get("createdBy"); // 외래키로 연결된 다른 테이블의 정보를 가져오는 방법, Post model의 39번 줄과 연결. 반환값이 없고 post.createdBy에 값을 넣어주는 것이니 주의!
+      const postResponse = await sequelize.transaction(async (t) => {
+        const post = await Post.create(
+          {
+            content: req.body.content,
+            takenAt: takenAt,
+            location: location,
+            latitude: latitude,
+            longitude: longitude,
+            createdById: user.id, // 외래키 직접 지정
+            friends: [],
+          },
+          { transaction: t },
+        );
+
+        // SELECT * FROM users WHERE users.id = 1(post.createdById);
+
+        await post.reload({ include: [User], transaction: t });
+
+        return post.toResponse();
+      });
 
       res.status(201).json({
         success: true,
-        post: post.toResponse(),
+        post: postResponse,
       });
     } catch (error) {
       next(error);

@@ -1,19 +1,22 @@
-import { checkAuth, requireAuth } from "./middlewares/auth";
-import {
-  validateCreateAccount,
-  validateLoginEmail,
-} from "./middlewares/validator";
+import { validateCreateFriend } from "./middlewares/validators/friends";
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import accountController from "./controllers/account";
+import { connectDB } from "./services/database";
 import { errorHandler } from "./controllers/error";
+import { validateCreatePost } from "./middlewares/validators/posts";
+import { validateCreateAccount } from "./middlewares/validators/account";
+import { validateLoginEmail } from "./middlewares/validators/auth";
+import { checkAuth, requireAuth } from "./middlewares/auth";
+import AuthService from "./services/auth";
+import accountController from "./controllers/account";
 import authController from "./controllers/auth";
 import postController from "./controllers/post";
 import postsController from "./controllers/posts";
-import { connectDB } from "./services/database";
-import AuthService from "./services/auth";
+import commentController from "./controllers/comment";
+import friendsController from "./controllers/friends";
+import friendController from "./controllers/friend";
 
 // Config
 dotenv.config();
@@ -39,12 +42,21 @@ app
 app
   .route("/posts")
   .get(requireAuth, postsController.viewPosts)
-  .post(requireAuth, postsController.createPost);
+  .post(requireAuth, validateCreatePost, postsController.createPost);
 app
   .route("/post/:id")
-  .get(requireAuth, postController.viewPost)
+  .get(checkAuth, postController.viewPost)
   .put(requireAuth, postController.editPost)
   .delete(requireAuth, postController.deletePost);
+app.route("/post/:id/comment").post(checkAuth, commentController.createComment);
+app
+  .route("/friends")
+  .get(requireAuth, friendsController.viewFriends)
+  .post(requireAuth, validateCreateFriend, friendsController.createFriend);
+app
+  .route("/friend/:id")
+  .get(requireAuth, friendController.viewFriend)
+  .delete(requireAuth, friendController.deleteFriend);
 
 // Error Handler (ALWAYS last)
 app.use(errorHandler);

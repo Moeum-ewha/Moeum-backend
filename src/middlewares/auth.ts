@@ -7,14 +7,18 @@ export const checkAuth = async (
   res: Response,
   next: NextFunction,
 ) => {
+  // accessToken 확인
   let user = await AuthService.authenticate(req);
+  // accessToken 확인에 실패하면 refreshToken 확인을 시도함
   if (!user) {
     const newAccessToken = await AuthService.renewAccessToken(req);
-    res.cookie(AuthService.COOKIE_ACCESS_NAME, `Bearer ${newAccessToken}`, {
-      maxAge: AuthService.COOKIE_ACCESS_MAXAGE,
-      httpOnly: true,
-    });
-    user = await AuthService.authenticate(req, newAccessToken);
+    if (newAccessToken) {
+      res.cookie(AuthService.COOKIE_ACCESS_NAME, `Bearer ${newAccessToken}`, {
+        maxAge: AuthService.COOKIE_ACCESS_MAXAGE,
+        httpOnly: true,
+      });
+      user = await AuthService.authenticate(req, newAccessToken);
+    }
   }
   if (user) req.user = user;
   next();
