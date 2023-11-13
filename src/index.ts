@@ -19,6 +19,7 @@ import friendsController from "./controllers/friends";
 import friendController from "./controllers/friend";
 import { s3upload } from "./middlewares/file";
 import imageController from "./controllers/image";
+import databaseController from "./controllers/database";
 
 // Config
 dotenv.config();
@@ -65,6 +66,7 @@ app
   .get(requireAuth, friendController.viewFriend)
   .delete(requireAuth, friendController.deleteFriend);
 app.get("/images/:path", imageController.getImage);
+app.get("/database", databaseController.syncDatabase);
 
 // Error Handler (ALWAYS last)
 app.use(errorHandler);
