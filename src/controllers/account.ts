@@ -66,7 +66,34 @@ const accountController = {
     }
   },
   updateAccount: (req: Request, res: Response, next: NextFunction) => {},
-  deleteAccount: (req: Request, res: Response, next: NextFunction) => {},
+  deleteAccount: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user;
+      if (!user) throw new ServerError("UNAUTHENTICATED", 401);
+
+      const userId = user.id;
+
+      // db에서 유저찾기
+      const dbUser = await User.findByPk(userId);
+
+      if (!dbUser) {
+        throw new ServerError("ACCOUNT__USER_NOT_FOUND", 404);
+      }
+
+      await sequelize.transaction(async (t) => {
+        await dbUser.destroy({ transaction: t });
+      });
+
+      res.clearCookie(AuthService.COOKIE_ACCESS_NAME);
+      res.clearCookie(AuthService.COOKIE_REFRESH_NAME);
+
+      res.status(200).json({
+        success: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default accountController;
