@@ -47,7 +47,10 @@ app
   .get(requireAuth, postsController.viewPosts)
   .post(
     requireAuth,
-    s3upload.single("photo"),
+    s3upload.fields([
+      { name: "original", maxCount: 1 },
+      { name: "faces", maxCount: 3 },
+    ]),
     validateCreatePost,
     postsController.createPost,
   );
@@ -57,16 +60,13 @@ app
   .put(requireAuth, postController.editPost)
   .delete(requireAuth, postController.deletePost);
 app.route("/post/:id/comment").post(checkAuth, commentController.createComment);
-app
-  .route("/friends")
-  .get(requireAuth, friendsController.viewFriends)
-  .post(requireAuth, validateCreateFriend, friendsController.createFriend);
+app.route("/friends").get(requireAuth, friendsController.viewFriends);
 app
   .route("/friend/:id")
   .get(requireAuth, friendController.viewFriend)
   .delete(requireAuth, friendController.deleteFriend);
-app.get("/images/:path", imageController.getImage);
-app.get("/database", databaseController.syncDatabase);
+app.route("/images/:path").get(imageController.getImage);
+app.route("/database").get(databaseController.syncDatabase);
 
 // Error Handler (ALWAYS last)
 app.use(errorHandler);
