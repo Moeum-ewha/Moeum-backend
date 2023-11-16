@@ -10,9 +10,6 @@ const postController = {
   viewPost: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = req.params.id;
-      if (!isInt(postId)) {
-        throw new ServerError("POST__INVALID_POSTID", 400);
-      }
 
       const post = await Post.findOne({
         where: { id: postId },

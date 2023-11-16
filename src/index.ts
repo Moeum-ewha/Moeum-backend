@@ -20,6 +20,7 @@ import friendController from "./controllers/friend";
 import { s3upload } from "./middlewares/file";
 import imageController from "./controllers/image";
 import databaseController from "./controllers/database";
+import { validateViewPost } from "./middlewares/validators/post";
 
 // Config
 dotenv.config();
@@ -56,7 +57,7 @@ app
   );
 app
   .route("/post/:id")
-  .get(checkAuth, postController.viewPost)
+  .get(checkAuth, validateViewPost, postController.viewPost)
   .put(requireAuth, postController.editPost)
   .delete(requireAuth, postController.deletePost);
 app.route("/post/:id/comment").post(checkAuth, commentController.createComment);
