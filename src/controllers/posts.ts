@@ -47,7 +47,6 @@ const postsController = {
       const faceImgPaths = files.faces.map((face) =>
         face.key.replace(/^images\//, ""),
       );
-      console.log(faceImgPaths);
 
       const postResponse = await sequelize.transaction(async (transaction) => {
         const post = await Post.create(
