@@ -1,5 +1,5 @@
 import { Optional } from "sequelize";
-import { Post, PostAttribs } from "./Post.model";
+import { Post, PostAttribs, PostResponseSimple } from "./Post.model";
 import { User, UserAttribs, UserResponse } from "./User.model";
 import {
   AllowNull,
@@ -7,8 +7,10 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  ForeignKey,
   Model,
   Table,
+  Unique,
 } from "sequelize-typescript";
 import { FriendPost } from "./FriendPost.model";
 import ServerError from "../services/error";
@@ -16,19 +18,18 @@ import ServerError from "../services/error";
 export type FriendAttribs = {
   id: number;
   friendName: string;
+  imgPath: string;
   createdBy?: User;
   createdById: UserAttribs["id"];
   posts?: Post[];
 };
 
-type FriendCAttribs = Optional<FriendAttribs, "id">;
+export type FriendCAttribs = Optional<FriendAttribs, "id">;
 
 export type FriendResponse = Pick<
   FriendAttribs,
-  "id" | "friendName" | "posts"
-> & {
-  createdBy: UserResponse;
-};
+  "id" | "friendName" | "imgPath"
+> & { posts: PostResponseSimple[] | undefined };
 
 @Table({
   modelName: "Friend",
@@ -38,9 +39,20 @@ export type FriendResponse = Pick<
   collate: "utf8mb4_general_ci",
 })
 export class Friend extends Model<FriendAttribs, FriendCAttribs> {
+  @Unique("user-friend")
   @AllowNull(false)
   @Column(DataType.STRING(255))
   friendName!: FriendAttribs["friendName"];
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  imgPath!: FriendAttribs["imgPath"];
+
+  @Unique("user-friend")
+  @AllowNull(false)
+  @ForeignKey(() => User)
+  @Column(DataType.INTEGER)
+  createdById!: UserAttribs["id"];
 
   @BelongsTo(() => User, { foreignKey: "createdById" })
   createdBy: FriendAttribs["createdBy"];
@@ -49,14 +61,11 @@ export class Friend extends Model<FriendAttribs, FriendCAttribs> {
   posts: FriendAttribs["posts"];
 
   toResponse(): FriendResponse {
-    const createdBy = this.createdBy;
-    if (!createdBy) throw new ServerError("FRIEND__USER_NOT_INCLUDED", 500);
-
     return {
       id: this.id,
       friendName: this.friendName,
-      createdBy: createdBy.toResponse(),
-      posts: this.posts,
+      imgPath: this.imgPath,
+      posts: this.posts?.map((post) => post.toResponseSimple()),
     };
   }
 }

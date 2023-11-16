@@ -1,4 +1,3 @@
-import { UserResponse } from "./../models/User.model";
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/User.model";
 import AuthService from "../services/auth";

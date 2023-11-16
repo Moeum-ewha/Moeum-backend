@@ -12,7 +12,7 @@ import {
 import ServerError from "../services/error";
 import { User, UserAttribs, UserResponse } from "./User.model";
 import { Comment, CommentResponse } from "./Comment.model";
-import { Friend } from "./Friend.model";
+import { Friend, FriendResponse } from "./Friend.model";
 import { FriendPost } from "./FriendPost.model";
 
 export type PostAttribs = {
@@ -27,7 +27,7 @@ export type PostAttribs = {
   createdBy?: User; // 모델에만 존재, 실제 데이터베이스 Column에는 없음.
   createdById: UserAttribs["id"];
   comments?: Comment[];
-  friends: Friend[];
+  friends?: Friend[];
 };
 
 type PostCAtrribs = Optional<PostAttribs, "id" | "createdAt">;
@@ -40,12 +40,15 @@ export type PostResponse = Pick<
   | "location"
   | "latitude"
   | "longitude"
-  // "imgPath"???
+  | "imgPath"
   | "createdAt"
 > & {
   createdBy: UserResponse;
   comments?: CommentResponse[];
+  friends: FriendResponse[];
 };
+
+export type PostResponseSimple = Pick<PostAttribs, "id" | "imgPath">;
 
 @Table({
   modelName: "Post",
@@ -60,7 +63,7 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
   content!: PostAttribs["content"]; // sequelize가 확실히 만들어 줄 것이기 때문에 !로 타입스크립트 에러를 없애야 함
 
   @AllowNull(false)
-  @Column(DataType.DATE)
+  @Column(DataType.STRING)
   takenAt!: PostAttribs["takenAt"];
 
   @AllowNull(false)
@@ -90,13 +93,16 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
   comments: PostAttribs["comments"];
 
   @BelongsToMany(() => Friend, () => FriendPost)
-  friends!: PostAttribs["friends"];
+  friends: PostAttribs["friends"];
 
   toResponse(): PostResponse {
     const createdBy = this.createdBy;
     if (!createdBy) throw new ServerError("POST__USER_NOT_INCLUDED", 500);
 
     let comments = this.comments; // comments, [], undefined 3가지 경우의 수
+
+    const friends = this.friends;
+    if (!friends) throw new ServerError("POST__FRIEND_NOT_INCLUDED", 500);
 
     return {
       id: this.id,
@@ -105,9 +111,18 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
       location: this.location,
       latitude: this.latitude,
       longitude: this.longitude,
+      imgPath: this.imgPath,
       createdAt: this.createdAt,
       createdBy: createdBy.toResponse(),
       comments: comments?.map((comment) => comment.toResponse()),
+      friends: friends.map((friend) => friend.toResponse()),
+    };
+  }
+
+  toResponseSimple(): PostResponseSimple {
+    return {
+      id: this.id,
+      imgPath: this.imgPath,
     };
   }
 }
