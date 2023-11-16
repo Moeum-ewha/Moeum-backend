@@ -1,5 +1,5 @@
 import { Optional } from "sequelize";
-import { Post, PostAttribs } from "./Post.model";
+import { Post, PostAttribs, PostResponseSimple } from "./Post.model";
 import { User, UserAttribs, UserResponse } from "./User.model";
 import {
   AllowNull,
@@ -28,8 +28,8 @@ export type FriendCAttribs = Optional<FriendAttribs, "id">;
 
 export type FriendResponse = Pick<
   FriendAttribs,
-  "id" | "friendName" | "imgPath" | "posts"
->;
+  "id" | "friendName" | "imgPath"
+> & { posts: PostResponseSimple[] | undefined };
 
 @Table({
   modelName: "Friend",
@@ -65,7 +65,7 @@ export class Friend extends Model<FriendAttribs, FriendCAttribs> {
       id: this.id,
       friendName: this.friendName,
       imgPath: this.imgPath,
-      posts: this.posts,
+      posts: this.posts?.map((post) => post.toResponseSimple()),
     };
   }
 }
