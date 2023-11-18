@@ -9,9 +9,9 @@ export const validateViewPost = (
 ) => {
   try {
     const postId = req.params.id;
-    if (!isInt(postId)) {
-      throw new ServerError("POST__INVALID_POSTID", 400);
-    }
+    // if (!isInt(postId)) {
+    //   throw new ServerError("POST__INVALID_POSTID", 400);
+    // }
 
     next(); // validation success
   } catch (error) {

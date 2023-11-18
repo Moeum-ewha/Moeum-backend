@@ -30,7 +30,7 @@ const postsController = {
       const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
-      const takenAt = new Date(req.body.takenAt);
+      const takenAt = req.body.takenAt;
       const location = req.body.location;
       const latitude = req.body.latitude;
       const longitude = req.body.longitude;
@@ -47,6 +47,12 @@ const postsController = {
       const faceImgPaths = files.faces.map((face) =>
         face.key.replace(/^images\//, ""),
       );
+
+      if (newFriendNames.length !== faceImgPaths.length)
+        throw new ServerError(
+          "POSTS__NEWFRIENDNAMES_FACEIMGPATHS_LENGTH_NOT_EQUAL",
+          400,
+        );
 
       const postResponse = await sequelize.transaction(async (transaction) => {
         const post = await Post.create(
