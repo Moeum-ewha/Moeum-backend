@@ -43,7 +43,6 @@ export type PostResponse = Pick<
   | "imgPath"
   | "createdAt"
 > & {
-  createdBy: UserResponse;
   comments?: CommentResponse[];
   friends: FriendResponse[];
 };
@@ -96,9 +95,6 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
   friends: PostAttribs["friends"];
 
   toResponse(): PostResponse {
-    const createdBy = this.createdBy;
-    if (!createdBy) throw new ServerError("POST__USER_NOT_INCLUDED", 500);
-
     let comments = this.comments; // comments, [], undefined 3가지 경우의 수
 
     const friends = this.friends;
@@ -113,7 +109,6 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
       longitude: this.longitude,
       imgPath: this.imgPath,
       createdAt: this.createdAt,
-      createdBy: createdBy.toResponse(),
       comments: comments?.map((comment) => comment.toResponse()),
       friends: friends.map((friend) => friend.toResponse()),
     };

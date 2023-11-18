@@ -15,9 +15,8 @@ const postController = {
       const post = await Post.findOne({
         where: { id: postId },
         include: [
-          { model: User, foreignKey: "createdById" },
           { model: Comment, foreignKey: "postId" },
-          { model: Friend, foreignKey: "friendId" },
+          { model: Friend, foreignKey: "Id" },
         ],
       });
 
