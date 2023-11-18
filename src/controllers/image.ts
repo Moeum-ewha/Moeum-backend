@@ -10,23 +10,28 @@ import ServerError from "../services/error";
 
 const imageController = {
   getImage: async (req: Request, res: Response, next: NextFunction) => {
-    const path = req.params.path;
-    const command = new GetObjectCommand({
-      Bucket: "moeumbucket",
-      Key: `images/${path}`,
-    });
+    try {
+      const path = req.params.path;
+      const command = new GetObjectCommand({
+        Bucket: "moeumbucket",
+        Key: `images/${path}`,
+      });
 
-    const { Body, ContentType, ContentLength } = await s3Client.send(command);
-    if (Body instanceof Readable) {
-      if (ContentType) res.setHeader("content-type", ContentType); // 클라이언트한테 나 사진보낼거라고 말해줘야 함
-      if (ContentLength) res.setHeader("content-length", ContentLength);
+      const { Body, ContentType, ContentLength } = await s3Client.send(command);
+      if (Body instanceof Readable) {
+        if (ContentType) res.setHeader("content-type", ContentType); // 클라이언트한테 나 사진보낼거라고 말해줘야 함
+        if (ContentLength) res.setHeader("content-length", ContentLength);
 
-      if (process.env.NOE_ENV === "production") {
-        res.setHeader("cache-control", `max-age=${ms("1h")}`);
+        if (process.env.NOE_ENV === "production") {
+          res.setHeader("cache-control", `max-age=${ms("1h")}`);
+        }
+        Body.pipe(res); // Body에서 읽어온 사진 조각을 res에 넣어준다
+      } else {
+        console.log();
+        throw new ServerError("IMAGE__NOT_FOUND", 404);
       }
-      Body.pipe(res); // Body에서 읽어온 사진 조각을 res에 넣어준다
-    } else {
-      throw new ServerError("IMAGE__NOT_FOUND", 404);
+    } catch (error) {
+      next(error);
     }
   },
 };
