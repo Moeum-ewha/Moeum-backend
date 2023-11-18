@@ -36,7 +36,7 @@ const postsController = {
       const longitude = req.body.longitude;
 
       const newFriendNames = req.body.newFriendNames.split(","); // ["윤선", "건희"]
-      const oldFriendNames = req.body.oldFriendNames; // [""]
+      const oldFriendNames = req.body.oldFriendNames.split(","); // [""]
       const friendNames = newFriendNames.concat(oldFriendNames); // ["건희", ""]
 
       const files = req.files as {
