@@ -8,10 +8,29 @@ import ServerError from "../services/error";
 // app.get("/image/:path")
 // localhost:3000/image/~~~~.png
 
+const extToMime = (exttype: string) => {
+  const extdict = {
+    gif: "image/gif",
+    bmp: "image/bmp",
+    jpg: "image/jpg",
+    png: "image/png",
+    tiff: "image/tiff",
+    webp: "image/webp",
+  };
+
+  if (exttype in extdict) {
+    // in 키워드를 감지 못하는 타스..때문에 아래처럼 작성함
+    return extdict[exttype as keyof typeof extdict];
+  }
+
+  throw new ServerError("FILE__INVALID_EXTTYPE", 400);
+};
+
 const imageController = {
   getImage: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const path = req.params.path;
+      const ext = path.split(".")[1];
       const command = new GetObjectCommand({
         Bucket: "moeumbucket",
         Key: `images/${path}`,
@@ -19,7 +38,7 @@ const imageController = {
 
       const { Body, ContentType, ContentLength } = await s3Client.send(command);
       if (Body instanceof Readable) {
-        if (ContentType) res.setHeader("content-type", ContentType); // 클라이언트한테 나 사진보낼거라고 말해줘야 함
+        if (ContentType) res.setHeader("content-type", extToMime(ext)); // 클라이언트한테 나 사진보낼거라고 말해줘야 함
         if (ContentLength) res.setHeader("content-length", ContentLength);
 
         if (process.env.NOE_ENV === "production") {
