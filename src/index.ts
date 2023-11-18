@@ -21,6 +21,14 @@ import { s3upload } from "./middlewares/file";
 import imageController from "./controllers/image";
 import databaseController from "./controllers/database";
 import { validateViewPost } from "./middlewares/validators/post";
+import cors from "cors";
+
+const corsOptions = {
+  origin: ["http://localhost:5173"],
+  optionsSuccessStatus: 200,
+  credentials: true,
+  exposedHeaders: ["set-cookie"],
+};
 
 // Config
 dotenv.config();
@@ -31,6 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
+app.use(cors(corsOptions));
 
 // Controllers
 app
