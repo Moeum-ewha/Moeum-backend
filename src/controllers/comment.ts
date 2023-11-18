@@ -3,7 +3,6 @@ import isInt from "validator/lib/isInt";
 import ServerError from "../services/error";
 import { sequelize } from "../services/database";
 import { Comment } from "../models/Comment.model";
-import createNickname from "../services/createNickname";
 
 const commentController = {
   createComment: async (req: Request, res: Response, next: NextFunction) => {
@@ -16,7 +15,7 @@ const commentController = {
       const commentResponse = await sequelize.transaction(async (t) => {
         const comment = await Comment.create(
           {
-            nickname: createNickname(),
+            profile: req.body.profile, // 0-24
             content: req.body.content,
             postId: parseInt(postId),
           },

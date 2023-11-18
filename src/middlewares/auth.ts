@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import AuthService from "../services/auth";
+import ServerError from "../services/error";
 
 // 로그인이 안되어도 실패하지 않음. 로그인이 되어 있는지 확인만 함.
 export const checkAuth = async (
@@ -30,20 +31,27 @@ export const requireAuth = async (
   res: Response,
   next: NextFunction,
 ) => {
-  let user = await AuthService.authenticate(req);
-  if (!user) {
-    const newAccessToken = await AuthService.renewAccessToken(req);
-    res.cookie(AuthService.COOKIE_ACCESS_NAME, `Bearer ${newAccessToken}`, {
-      maxAge: AuthService.COOKIE_ACCESS_MAXAGE,
-      httpOnly: true,
-    });
-    user = await AuthService.authenticate(req, newAccessToken);
-  }
+  try {
+    let user = await AuthService.authenticate(req);
+    if (!user) {
+      const newAccessToken = await AuthService.renewAccessToken(req);
+      if (!newAccessToken)
+        throw new ServerError("REQUIREAUTH__NO_NEWACCESSTOKEN", 400);
+      res.cookie(AuthService.COOKIE_ACCESS_NAME, `Bearer ${newAccessToken}`, {
+        maxAge: AuthService.COOKIE_ACCESS_MAXAGE,
+        httpOnly: true,
+      });
+      user = await AuthService.authenticate(req, newAccessToken);
+    }
 
-  if (user) {
-    req.user = user;
-    next();
-  } else {
-    res.status(401).json({ success: false, error: "UNAUTHENTICATED" });
+    if (user) {
+      req.user = user;
+      next();
+    } else {
+      console.log("requireAuth");
+      res.status(401).json({ success: false, error: "UNAUTHENTICATED" });
+    }
+  } catch (error) {
+    next(error);
   }
 };

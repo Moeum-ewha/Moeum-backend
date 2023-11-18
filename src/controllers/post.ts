@@ -5,20 +5,18 @@ import ServerError from "../services/error";
 import { Post } from "../models/Post.model";
 import { User } from "../models/User.model";
 import { Comment } from "../models/Comment.model";
+import { Friend } from "../models/Friend.model";
 
 const postController = {
   viewPost: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = req.params.id;
-      if (!isInt(postId)) {
-        throw new ServerError("POST__INVALID_POSTID", 400);
-      }
 
       const post = await Post.findOne({
         where: { id: postId },
         include: [
-          { model: User, foreignKey: "createdById" },
           { model: Comment, foreignKey: "postId" },
+          { model: Friend, foreignKey: "Id" },
         ],
       });
 

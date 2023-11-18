@@ -13,7 +13,7 @@ import { Post, PostAttribs } from "./Post.model";
 
 export type CommentAttribs = {
   id: number;
-  nickname: string;
+  profile: number;
   content: string;
   createdAt: Date;
   createdBy?: User;
@@ -26,7 +26,7 @@ type CommentCAttribs = Optional<CommentAttribs, "id" | "createdAt">;
 
 export type CommentResponse = Pick<
   CommentAttribs,
-  "id" | "nickname" | "content" | "createdAt" | "postId"
+  "id" | "profile" | "content" | "createdAt" | "postId"
 >;
 
 @Table({
@@ -39,7 +39,7 @@ export type CommentResponse = Pick<
 export class Comment extends Model<CommentAttribs, CommentCAttribs> {
   @AllowNull(false)
   @Column(DataType.STRING(255))
-  nickname!: CommentAttribs["nickname"];
+  profile!: CommentAttribs["profile"];
 
   @AllowNull(false)
   @Column(DataType.STRING(255))
@@ -58,7 +58,7 @@ export class Comment extends Model<CommentAttribs, CommentCAttribs> {
   toResponse(): CommentResponse {
     return {
       id: this.id,
-      nickname: this.nickname,
+      profile: this.profile,
       content: this.content,
       createdAt: this.createdAt,
       postId: this.postId,
