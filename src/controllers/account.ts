@@ -56,8 +56,8 @@ const accountController = {
         httpOnly: true,
       });
 
-      res.set("Moeum-Access-Token", accessToken);
-      res.set("Moeum-Refresh-Token", refreshToken);
+      res.set("moeumaccesstoken", accessToken);
+      res.set("moeumrefreshtoken", refreshToken);
 
       res.status(201).json({
         success: true,
