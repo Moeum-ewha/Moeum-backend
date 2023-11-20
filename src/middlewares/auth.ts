@@ -41,6 +41,7 @@ export const requireAuth = async (
         maxAge: AuthService.COOKIE_ACCESS_MAXAGE,
         httpOnly: true,
       });
+      res.set("Moeum-Access-Token", newAccessToken);
       user = await AuthService.authenticate(req, newAccessToken);
     }
 
