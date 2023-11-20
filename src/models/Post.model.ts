@@ -47,7 +47,10 @@ export type PostResponse = Pick<
   friends: FriendResponse[];
 };
 
-export type PostResponseSimple = Pick<PostAttribs, "id" | "imgPath">;
+export type PostResponseSimple = Pick<
+  PostAttribs,
+  "id" | "location" | "latitude" | "longitude" | "imgPath"
+>;
 
 @Table({
   modelName: "Post",
@@ -117,6 +120,9 @@ export class Post extends Model<PostAttribs, PostCAtrribs> {
   toResponseSimple(): PostResponseSimple {
     return {
       id: this.id,
+      location: this.location,
+      latitude: this.latitude,
+      longitude: this.longitude,
       imgPath: this.imgPath,
     };
   }
