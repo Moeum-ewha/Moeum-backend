@@ -34,6 +34,9 @@ const authController = {
         httpOnly: true,
       });
 
+      res.set("Moeum-Access-Token", accessToken);
+      res.set("Moeum-Refresh-Token", refreshToken);
+
       res.status(200).json({
         success: true,
         user: user.toResponse(),
