@@ -35,6 +35,7 @@ export const requireAuth = async (
     let user = await AuthService.authenticate(req);
     if (!user) {
       const newAccessToken = await AuthService.renewAccessToken(req);
+      // accessToken, refreshToken 둘 다 없는 경우
       if (!newAccessToken)
         throw new ServerError("REQUIREAUTH__NO_NEWACCESSTOKEN", 400);
       res.cookie(AuthService.COOKIE_ACCESS_NAME, `Bearer ${newAccessToken}`, {
