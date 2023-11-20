@@ -24,7 +24,11 @@ import { validateViewPost } from "./middlewares/validators/post";
 import cors from "cors";
 
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: [
+    "http://localhost:5173",
+    "http://10.200.10.143:5173",
+    "http://10.200.32.167:5173",
+  ],
   optionsSuccessStatus: 200,
   credentials: true,
   exposedHeaders: ["set-cookie", "moeumaccesstoken", "moeumrefreshtoken"],
