@@ -7,7 +7,10 @@ import { User } from "../models/User.model";
 const friendsController = {
   viewFriends: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = req.user;
+      const userId = req.query.userId as string;
+      if (!userId) throw new ServerError("UNAUTHENTICATED", 401);
+
+      const user = await User.findByPk(userId);
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
       const friends = await Friend.findAll({
