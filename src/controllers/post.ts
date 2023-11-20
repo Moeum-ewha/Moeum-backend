@@ -34,7 +34,10 @@ const postController = {
   },
   editPost: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = req.user;
+      const userId = req.query.userId as string;
+      if (!userId) throw new ServerError("UNAUTHENTICATED", 401);
+
+      const user = await User.findByPk(userId);
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
       const content = req.body.content;
@@ -90,7 +93,10 @@ const postController = {
   },
   deletePost: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = req.user;
+      const userId = req.query.userId as string;
+      if (!userId) throw new ServerError("UNAUTHENTICATED", 401);
+
+      const user = await User.findByPk(userId);
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
       const postId = req.params.id;
