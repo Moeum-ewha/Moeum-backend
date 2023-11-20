@@ -44,19 +44,18 @@ app.use(cors(corsOptions));
 // Controllers
 app
   .route("/account")
-  .get(requireAuth, accountController.viewMyAccount)
+  .get(accountController.viewMyAccount)
   .post(validateCreateAccount, accountController.createAccount)
-  .put(requireAuth, accountController.updateAccount)
-  .delete(requireAuth, accountController.deleteAccount);
+  .put(accountController.updateAccount)
+  .delete(accountController.deleteAccount);
 app
   .route("/auth")
   .post(validateLoginEmail, authController.loginEmail) // login
   .delete(authController.logoutEmail); // logout
 app
   .route("/posts")
-  .get(requireAuth, postsController.viewPosts)
+  .get(postsController.viewPosts)
   .post(
-    requireAuth,
     s3upload.fields([
       { name: "original", maxCount: 1 },
       { name: "faces", maxCount: 3 },
@@ -66,15 +65,15 @@ app
   );
 app
   .route("/post/:id")
-  .get(checkAuth, validateViewPost, postController.viewPost)
-  .put(requireAuth, postController.editPost)
-  .delete(requireAuth, postController.deletePost);
-app.route("/post/:id/comment").post(checkAuth, commentController.createComment);
-app.route("/friends").get(requireAuth, friendsController.viewFriends);
+  .get(validateViewPost, postController.viewPost)
+  .put(postController.editPost)
+  .delete(postController.deletePost);
+app.route("/post/:id/comment").post(commentController.createComment);
+app.route("/friends").get(friendsController.viewFriends);
 app
   .route("/friend/:id")
-  .get(requireAuth, friendController.viewFriend)
-  .delete(requireAuth, friendController.deleteFriend);
+  .get(friendController.viewFriend)
+  .delete(friendController.deleteFriend);
 app.route("/images/:path").get(imageController.getImage);
 app.route("/database").get(databaseController.syncDatabase);
 
