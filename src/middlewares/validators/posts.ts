@@ -70,8 +70,6 @@ export const validateCreatePost = (
     if (!files) throw new ServerError("POSTS__FILES_NOT_INCLUDED", 400);
     if (files.original?.length === 0)
       throw new ServerError("POSTS__FILES_ORIGINAL_NOT_INCLUDED", 400);
-    if (!files.faces)
-      throw new ServerError("POSTS__FILES_FACES_NOT_INCLUDED", 400);
     const newFriendNames = req.body.newFriendNames;
     if (newFriendNames !== "" && !newFriendNames)
       throw new ServerError("POSTS__FILES_NEWFRIENDNAMES_NOT_INCLUDED", 400);
