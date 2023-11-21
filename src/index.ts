@@ -31,6 +31,8 @@ const corsOptions = {
     "http://10.200.10.143:5173",
     "http://10.200.32.167:5173",
     "http://192.168.0.20:5173",
+    "http://172.20.10.7:5173",
+    "http://172.20.10.3:5173",
   ],
   optionsSuccessStatus: 200,
   credentials: true,
@@ -86,7 +88,7 @@ app.route("/database").get(databaseController.syncDatabase);
 app.route("/latest").get(latestController.viewLatest);
 app.route("/friend/:id/latest").get(friendLatestController.viewFriendLatest);
 
-// Error Handler (ALWAYS last)
+// Error Handler (ALWAYS last)ㅜ
 app.use(errorHandler);
 
 // Server start
