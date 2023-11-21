@@ -22,6 +22,8 @@ import imageController from "./controllers/image";
 import databaseController from "./controllers/database";
 import { validateViewPost } from "./middlewares/validators/post";
 import cors from "cors";
+import latestController from "./controllers/latest";
+import friendLatestController from "./controllers/friendLatest";
 
 const corsOptions = {
   origin: [
@@ -81,6 +83,8 @@ app
   .delete(friendController.deleteFriend);
 app.route("/images/:path").get(imageController.getImage);
 app.route("/database").get(databaseController.syncDatabase);
+app.route("/latest").get(latestController.viewLatest);
+app.route("/friend/:id/latest").get(friendLatestController.viewFriendLatest);
 
 // Error Handler (ALWAYS last)
 app.use(errorHandler);
