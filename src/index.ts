@@ -69,7 +69,6 @@ app
       { name: "original", maxCount: 1 },
       { name: "faces", maxCount: 3 },
     ]),
-    validateCreatePost,
     postsController.createPost,
   );
 app
