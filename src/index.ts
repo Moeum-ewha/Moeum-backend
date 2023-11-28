@@ -63,7 +63,7 @@ app
   .delete(authController.logoutEmail); // logout
 app
   .route("/posts")
-  .get(postsController.viewPosts)
+  .get(requireAuth, postsController.viewPosts)
   .post(
     s3upload.fields([
       { name: "original", maxCount: 1 },
