@@ -24,6 +24,7 @@ import { validateViewPost } from "./middlewares/validators/post";
 import cors from "cors";
 import latestController from "./controllers/latest";
 import friendLatestController from "./controllers/friendLatest";
+import awsController from "./controllers/aws";
 
 const corsOptions = {
   origin: [
@@ -33,6 +34,7 @@ const corsOptions = {
     "http://192.168.0.20:5173",
     "http://172.20.10.7:5173",
     "http://172.20.10.3:5173",
+    "https://moeum.vercel.app",
   ],
   optionsSuccessStatus: 200,
   credentials: true,
@@ -86,6 +88,7 @@ app.route("/images/:path").get(imageController.getImage);
 app.route("/database").get(databaseController.syncDatabase);
 app.route("/latest").get(latestController.viewLatest);
 app.route("/friend/:id/latest").get(friendLatestController.viewFriendLatest);
+app.route("/aws").get(awsController.healthCheck);
 
 // Error Handler (ALWAYS last)ㅜ
 app.use(errorHandler);
