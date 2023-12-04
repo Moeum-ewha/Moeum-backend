@@ -33,10 +33,13 @@ const postsController = {
   },
   createPost: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.query.userId as string;
-      if (!userId) throw new ServerError("UNAUTHENTICATED", 401);
+      // const userId = req.query.userId as string;
+      // if (!userId) throw new ServerError("UNAUTHENTICATED", 401);
 
-      const user = await User.findByPk(userId);
+      // const user = await User.findByPk(userId);
+      // if (!user) throw new ServerError("UNAUTHENTICATED", 401);
+
+      const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
       const takenAt = req.body.takenAt;
