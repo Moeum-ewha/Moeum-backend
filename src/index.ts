@@ -35,6 +35,7 @@ const corsOptions = {
     "http://172.20.10.7:5173",
     "http://172.20.10.3:5173",
     "https://moeum.vercel.app",
+    "https://www.moeum.site",
   ],
   optionsSuccessStatus: 200,
   credentials: true,
@@ -67,6 +68,7 @@ app
   .route("/posts")
   .get(requireAuth, postsController.viewPosts)
   .post(
+    requireAuth,
     s3upload.fields([
       { name: "original", maxCount: 1 },
       { name: "faces", maxCount: 3 },
@@ -75,19 +77,21 @@ app
   );
 app
   .route("/post/:id")
-  .get(validateViewPost, postController.viewPost)
-  .put(postController.editPost)
-  .delete(postController.deletePost);
+  .get(checkAuth, validateViewPost, postController.viewPost)
+  .put(requireAuth, postController.editPost)
+  .delete(requireAuth, postController.deletePost);
 app.route("/post/:id/comment").post(commentController.createComment);
-app.route("/friends").get(friendsController.viewFriends);
+app.route("/friends").get(requireAuth, friendsController.viewFriends);
 app
   .route("/friend/:id")
-  .get(friendController.viewFriend)
-  .delete(friendController.deleteFriend);
-app.route("/images/:path").get(imageController.getImage);
+  .get(requireAuth, friendController.viewFriend)
+  .delete(requireAuth, friendController.deleteFriend);
+app.route("/images/:path").get(requireAuth, imageController.getImage);
 app.route("/database").get(databaseController.syncDatabase);
-app.route("/latest").get(latestController.viewLatest);
-app.route("/friend/:id/latest").get(friendLatestController.viewFriendLatest);
+app.route("/latest").get(requireAuth, latestController.viewLatest);
+app
+  .route("/friend/:id/latest")
+  .get(requireAuth, friendLatestController.viewFriendLatest);
 app.route("/aws").get(awsController.healthCheck);
 
 // Error Handler (ALWAYS last)ㅜ
