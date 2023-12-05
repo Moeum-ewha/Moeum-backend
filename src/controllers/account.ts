@@ -7,10 +7,7 @@ import { sequelize } from "../services/database";
 const accountController = {
   viewMyAccount: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.query.userId as string;
-      if (!userId) throw new ServerError("UNAUTHENTICATED", 401);
-
-      const user = await User.findByPk(userId);
+      const user = req.user;
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
       res.status(200).json({
