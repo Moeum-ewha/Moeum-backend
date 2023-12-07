@@ -37,7 +37,7 @@ const postsController = {
 
       const newFriendNames = req.body.newFriendNames.split(","); // ["윤선", "건희"]
       const oldFriendNames = req.body.oldFriendNames.split(","); // [""]
-      const friendNames = newFriendNames.concat(oldFriendNames); // ["건희", ""]
+      const friendNames = newFriendNames.concat(oldFriendNames); // ["윤선", "건희", ""]
 
       const files = req.files as {
         // req.files as Record<string, Express.MulterS3.File[]> 와 같은 표현
@@ -89,6 +89,8 @@ const postsController = {
             },
             transaction,
           });
+
+          console.log(result);
 
           const friend = result[0];
           friends.push(friend);
