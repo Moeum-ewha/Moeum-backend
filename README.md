@@ -23,6 +23,26 @@ Face Recognition 기반 네컷사진 바인딩 서비스, 모음
 <br/>
 <br/>
 
+## 🍀 How to Install
+```npm install```
+<br/>   
+<br/>
+
+## 🍀 How to Build
+```
+npm run build
+npm run start
+```
+<br/>   
+<br/>
+
+## 🍀 How to Test
+- https://www.moeum.site 에 들어가서 서비스 테스트 및 이용 가능
+- ```git clone```을 통해서 직접 실행도 가능하지만, 보안을 위한 cors 처리로 막힐 가능성이 있음
+
+<br/>   
+<br/>
+
 ## 🍀 Service Core Function
 <br/>   
 <br/>
@@ -582,6 +602,7 @@ ex) [Fix] viewMyAccount 실행 시 UNAUTHENTICATED 오류 뜨는 에러 수정
 </br>
 
 ## 🍀 Dependencies Module ( package.json )
+Description of used Open Source
 ```
 {
   "name": "moeum-backend",
@@ -605,26 +626,26 @@ ex) [Fix] viewMyAccount 실행 시 UNAUTHENTICATED 오류 뜨는 에러 수정
   },
   "homepage": "https://github.com/Moeum-ewha/Moeum-backend#readme",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.449.0",
-    "@types/cookie-parser": "^1.4.5",
-    "@types/cors": "^2.8.16",
-    "@types/multer-s3": "^3.0.3",
-    "@types/on-finished": "^2.3.4",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "@aws-sdk/client-s3": "^3.449.0",   // AWS S3에서 데이터를 저장하고 검색하는 데 사용
+    "@types/cookie-parser": "^1.4.5",   // cookie-parser 라이브러리에 대한 타입 정의
+    "@types/cors": "^2.8.16",   // cors 라이브러리에 대한 타입 정의
+    "@types/multer-s3": "^3.0.3",   // multer-s3 라이브러리에 대한 타입 정의
+    "@types/on-finished": "^2.3.4",   // on-finished 라이브러리에 대한 타입 정의
+    "cookie-parser": "^1.4.6",   // express.js 애플리케이션에서 쿠키를 파싱하기 위한 미들웨어
+    "cors": "^2.8.5",   // 다른 도메인에 호스팅된 리소스에 대한 제어된 액세스를 허용
+    "dotenv": "^16.3.1",   // .env 파일에서 환경 변수를 process.env로 로드하기 위한 모듈
     "express": "^4.18.2",
-    "jose": "^4.15.3",
-    "morgan": "^1.10.0",
-    "ms": "^2.1.3",
-    "multer": "^1.4.5-lts.1",
-    "multer-s3": "^3.0.1",
+    "jose": "^4.15.3",   // JSON Web Tokens (JWT) 및 웹 보안과 관련된 다양한 암호화 작업을 지원
+    "morgan": "^1.10.0",   
+    "ms": "^2.1.3",   // 다양한 시간 형식을 밀리초로 변환하기 위한 유틸리티
+    "multer": "^1.4.5-lts.1",   // multipart/form-data를 처리하기 위한 미들웨어. Express.js 애플리케이션에서 파일 업로드를 처리하는 데 사용
+    "multer-s3": "^3.0.1",   // AWS S3에 파일 업로드를 직접 처리하기 위한 Multer 저장 엔진
     "mysql2": "^3.6.1",
-    "on-finished": "^2.4.1",
+    "on-finished": "^2.4.1",   // 응답 처리가 완료된 후에 콜백을 실행하기 위해 사용되는 모듈
     "reflect-metadata": "^0.1.13",
-    "sequelize": "^6.33.0",
-    "sequelize-typescript": "^2.1.5",
-    "uuid": "^9.0.1"
+    "sequelize": "^6.33.0",   // MySQL과 상호 작용하기 위한 promise 기반 Node.js ORM 
+    "sequelize-typescript": "^2.1.5",   // sequelize와 함께 TypeScript를 사용할 수 있게 해주는 라이브러리
+    "uuid": "^9.0.1"   // 고유 식별자를 생성하는 데 사용
   },
   "devDependencies": {
     "@types/express": "^4.17.18",
