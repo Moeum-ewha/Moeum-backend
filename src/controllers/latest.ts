@@ -11,6 +11,7 @@ const latestController = {
       if (!user) throw new ServerError("UNAUTHENTICATED", 401);
 
       const post = await Post.findAll({
+        where: { createdById: user.id },
         order: [["takenAt", "DESC"]],
         limit: 1,
         include: [Friend],
