@@ -18,6 +18,7 @@ const friendLatestController = {
       });
 
       const post = await Post.findAll({
+        where: { createdById: user.id },
         include: [
           {
             model: Friend,
