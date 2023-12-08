@@ -56,7 +56,7 @@ app.use(cors(corsOptions));
 // Controllers
 app
   .route("/account")
-  .get(accountController.viewMyAccount)
+  .get(requireAuth, accountController.viewMyAccount)
   .post(validateCreateAccount, accountController.createAccount)
   .put(accountController.updateAccount)
   .delete(accountController.deleteAccount);
